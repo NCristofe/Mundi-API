@@ -1,15 +1,31 @@
+import { FlatList, StyleSheet, Text } from 'react-native'
 import CountryCard from '../CountryCard/CountryCard.jsx'
 
 export default function CountryList({ countries = [] }) {
-  if (countries.length === 0) {
-    return <p>Nenhum país para exibir.</p>
-  }
-
   return (
-    <div className="country-list">
-      {countries.map((country) => (
-        <CountryCard key={country.cca3 ?? country.name?.common ?? country.name} country={country} />
-      ))}
-    </div>
+    <FlatList
+      data={countries}
+      keyExtractor={(country) => country.cca3 ?? country.name?.common ?? country.name}
+      renderItem={({ item }) => <CountryCard country={item} />}
+      contentContainerStyle={styles.list}
+      ItemSeparatorComponent={() => <Text style={styles.separator} />}
+      ListEmptyComponent={<Text style={styles.empty}>Nenhum país para exibir.</Text>}
+      keyboardShouldPersistTaps="handled"
+    />
   )
 }
+
+const styles = StyleSheet.create({
+  list: {
+    paddingTop: 16,
+    paddingBottom: 24,
+  },
+  separator: {
+    height: 10,
+  },
+  empty: {
+    paddingVertical: 20,
+    color: '#59665f',
+    fontSize: 15,
+  },
+})
