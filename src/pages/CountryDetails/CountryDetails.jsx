@@ -1,3 +1,7 @@
+import { StyleSheet, Text, View } from 'react-native'
+
 export default function CountryDetails() {
-  return <section aria-labelledby="country-details-title"><h1 id="country-details-title">Detalhes do país</h1></section>
+  return <View style={styles.page}><Text accessibilityRole="header" style={styles.title}>Detalhes do país</Text></View>
 }
+
+const styles = StyleSheet.create({ page: { flex: 1 }, title: { fontSize: 24, fontWeight: '700' } })
