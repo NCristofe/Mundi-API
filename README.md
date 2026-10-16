@@ -1,16 +1,14 @@
 # Mundi
 
-Frontend em React e Vite.
+Aplicativo mobile em React Native com Expo.
 
-## Desenvolvimento
+## Executar
 
 ```bash
 npm install
-npm run dev
+npm start
 ```
 
-## Build
+Abra o projeto no Expo Go ou inicie um emulador Android/iOS e use os atalhos interativos do Expo. Também é possível executar diretamente com `npm run android` ou `npm run ios`.
 
-```bash
-npm run build
-```
+Para gerar builds instaláveis, configure o EAS Build conforme a plataforma de destino.
