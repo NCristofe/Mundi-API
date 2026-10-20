@@ -5,7 +5,7 @@ export default function CountryList({ countries = [] }) {
   return (
     <FlatList
       data={countries}
-      keyExtractor={(country) => country.cca3 ?? country.name?.common ?? country.name}
+      keyExtractor={(country) => country.code}
       renderItem={({ item }) => <CountryCard country={item} />}
       contentContainerStyle={styles.list}
       ItemSeparatorComponent={() => <Text style={styles.separator} />}

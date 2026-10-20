@@ -5,15 +5,12 @@ import CountryList from '../../components/CountryList/CountryList.jsx'
 import Loading from '../../components/Loading/Loading.jsx'
 import SearchBar from '../../components/SearchBar/SearchBar.jsx'
 import { useFavorites } from '../../context/FavoritesContext.jsx'
-import { getCountries } from '../../services/api.js'
+import { searchCountries } from '../../services/countriesApi.js'
 
 const HEADER_HEIGHT = 60
 const INTRO_PADDING_TOP = 28
 const SEARCH_BAR_TOP_FROM_SCREEN = 567
-
-function getCountryCode(country) {
-  return country?.cca3 ?? country?.name?.common ?? country?.name
-}
+const SEARCH_DEBOUNCE_MS = 400
 
 export default function Home() {
   const insets = useSafeAreaInsets()
@@ -25,12 +22,12 @@ export default function Home() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
   const { favorites } = useFavorites()
 
-  async function loadCountries() {
+  async function loadCountries(search = query) {
     setLoading(true)
     setError('')
 
     try {
-      setCountries(await getCountries())
+      setCountries(await searchCountries(search.trim()))
     } catch {
       setError('Não foi possível carregar os países.')
     } finally {
@@ -38,17 +35,17 @@ export default function Home() {
     }
   }
 
+  // A busca acontece na API; o debounce evita uma requisição por tecla
   useEffect(() => {
-    loadCountries()
-  }, [])
+    const timer = setTimeout(() => loadCountries(query), SEARCH_DEBOUNCE_MS)
+    return () => clearTimeout(timer)
+  }, [query])
 
-  const favoriteCodes = new Set(favorites.map(getCountryCode))
+  const favoriteCodes = new Set(favorites.map((favorite) => favorite.code))
 
-  const filteredCountries = countries
-    .filter((country) =>
-      country.name.common.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()),
-    )
-    .filter((country) => !showFavoritesOnly || favoriteCodes.has(getCountryCode(country)))
+  const filteredCountries = showFavoritesOnly
+    ? countries.filter((country) => favoriteCodes.has(country.code))
+    : countries
 
   const searchRowMarginTop = Math.max(
     0,
@@ -83,7 +80,7 @@ export default function Home() {
       {error ? (
         <View style={styles.errorBox}>
           <Text style={styles.errorText}>{error}</Text>
-          <Pressable accessibilityRole="button" onPress={loadCountries} style={styles.retryButton}>
+          <Pressable accessibilityRole="button" onPress={() => loadCountries()} style={styles.retryButton}>
             <Text style={styles.retryText}>Tentar novamente</Text>
           </Pressable>
         </View>

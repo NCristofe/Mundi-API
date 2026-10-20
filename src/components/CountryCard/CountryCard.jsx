@@ -1,9 +1,9 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 export default function CountryCard({ country }) {
-  const name = country?.name?.common ?? country?.name ?? 'País'
-  const flag = country?.flags?.png ?? country?.flags?.svg
-  const capital = country?.capital?.[0] ?? 'Sem capital informada'
+  const name = country?.name ?? 'País'
+  const flag = country?.flagUrl
+  const capital = country?.capital ?? 'Sem capital informada'
 
   return (
     <View style={styles.card}>

@@ -6,17 +6,11 @@ export function FavoritesProvider({ children }) {
   const [favorites, setFavorites] = useState([])
 
   function toggleFavorite(country) {
-    const countryCode = country.cca3 ?? country.name?.common ?? country.name
-
     setFavorites((currentFavorites) => {
-      const isFavorite = currentFavorites.some(
-        (favorite) => (favorite.cca3 ?? favorite.name?.common ?? favorite.name) === countryCode,
-      )
+      const isFavorite = currentFavorites.some((favorite) => favorite.code === country.code)
 
       return isFavorite
-        ? currentFavorites.filter(
-            (favorite) => (favorite.cca3 ?? favorite.name?.common ?? favorite.name) !== countryCode,
-          )
+        ? currentFavorites.filter((favorite) => favorite.code !== country.code)
         : [...currentFavorites, country]
     })
   }
