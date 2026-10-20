@@ -7,7 +7,8 @@ export async function getCountries() {
     throw new Error(`Falha ao carregar países (${response.status})`)
   }
 
-  return response.json()
+  const data = await response.json()
+  return Array.isArray(data) ? data : []
 }
 
 export async function getCountryByCode(code) {
