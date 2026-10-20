@@ -1,38 +1,48 @@
-import { StyleSheet, TextInput, View } from 'react-native'
+import { Image, StyleSheet, TextInput } from 'react-native'
+import PixelBox from '../PixelBox/PixelBox.jsx'
+import { colors, fonts } from '../theme.js'
 
-export default function SearchBar({ value, onChange, placeholder = 'Buscar países', style }) {
+const searchIcon = require('../../assets/icons/search.png')
+
+export default function SearchBar({ value, onChange, onSubmit, placeholder = 'Pesquise o país', style }) {
   return (
-    <View style={[styles.wrapper, style]}>
+    <PixelBox style={[styles.wrapper, style]} contentStyle={styles.content}>
+      <Image source={searchIcon} style={styles.icon} />
       <TextInput
         accessibilityLabel={placeholder}
         style={styles.input}
         value={value}
         onChangeText={onChange}
+        onSubmitEditing={onSubmit}
         placeholder={placeholder}
-        placeholderTextColor="#78847e"
+        placeholderTextColor={colors.placeholder}
         returnKeyType="search"
+        autoCorrect={false}
       />
-    </View>
+    </PixelBox>
   )
 }
 
 const styles = StyleSheet.create({
   wrapper: {
     height: 48,
-    backgroundColor: '#EBEBEB',
-    borderWidth: 5,
-    borderColor: '#000000',
-    borderRadius: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
+  },
+  content: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 6,
+    gap: 10,
+  },
+  icon: {
+    width: 22,
+    height: 22,
   },
   input: {
     flex: 1,
-    paddingHorizontal: 14,
-    color: '#202a31',
-    fontSize: 16,
+    height: '100%',
+    paddingVertical: 0,
+    color: colors.text,
+    fontFamily: fonts.pixel,
+    fontSize: 13,
   },
 })
