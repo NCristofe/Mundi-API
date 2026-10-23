@@ -1,49 +1,33 @@
+import { PressStart2P_400Regular, useFonts } from '@expo-google-fonts/press-start-2p'
 import { StatusBar } from 'expo-status-bar'
-import { Image, StyleSheet, View } from 'react-native'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
-import Header from './components/Header/Header.jsx'
-import Home from './pages/Home/Home.jsx'
+import { useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { colors } from './components/theme.js'
 import { FavoritesProvider } from './context/FavoritesContext.jsx'
+import Home from './pages/Home/Home.jsx'
+import Splash from './pages/Splash/Splash.jsx'
 
 export default function App() {
+  const [fontsLoaded] = useFonts({ PressStart2P_400Regular })
+  const [splashDone, setSplashDone] = useState(false)
+
   return (
     <SafeAreaProvider>
       <FavoritesProvider>
-        <SafeAreaView style={styles.safeArea}>
+        <View style={styles.root}>
           <StatusBar style="dark" />
-          <Header />
-          <View style={styles.page}>
-            <Home />
-          </View>
-          <View style={styles.footer}>
-            <Image
-              source={require('./assets/images/logo.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-          </View>
-        </SafeAreaView>
+          {!splashDone ? <Splash onFinish={() => setSplashDone(true)} /> : null}
+          {splashDone && fontsLoaded ? <Home /> : null}
+        </View>
       </FavoritesProvider>
     </SafeAreaProvider>
   )
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  root: {
     flex: 1,
-    backgroundColor: '#D1FFF2',
-  },
-  page: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  footer: {
-    alignItems: 'center',
-    paddingVertical: 12,
-    backgroundColor: '#D1FFF2',
-  },
-  logo: {
-    width: 160,
-    height: 45,
+    backgroundColor: colors.background,
   },
 })

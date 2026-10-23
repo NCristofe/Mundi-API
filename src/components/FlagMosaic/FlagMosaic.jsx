@@ -1,24 +1,21 @@
-import { Image, StyleSheet, View } from 'react-native'
+import { Image, StyleSheet, View, useWindowDimensions } from 'react-native'
 import { colors } from '../theme.js'
 
-const COLUMNS = 6
-const ROWS = 6
+const flagsArt = require('../../assets/images/bandeiras.png')
+
+// Proporção da arte exportada do Figma (402×499)
+const ART_WIDTH = 402
+const ART_HEIGHT = 499
 const FADE_STEPS = 8
 
 // Mosaico inclinado de bandeiras do topo da tela inicial.
-// As bandeiras vêm da API (lista de URLs) e se repetem até preencher a grade.
-export default function FlagMosaic({ flags = [], height = 360, fadeColor = colors.background, style }) {
-  const tiles = flags.length ? Array.from({ length: COLUMNS * ROWS }, (_, index) => flags[index % flags.length]) : []
+// A arte começa no topo, na largura da tela, e é cortada pela parte de baixo; o fade leva as bandeiras até o fundo.
+export default function FlagMosaic({ height = 360, fadeColor = colors.background, style }) {
+  const { width: screenWidth } = useWindowDimensions()
 
   return (
     <View style={[styles.container, { height }, style]} pointerEvents="none">
-      <View style={styles.grid}>
-        {tiles.map((uri, index) => (
-          <View key={index} style={styles.tile}>
-            <Image source={{ uri }} style={styles.flag} />
-          </View>
-        ))}
-      </View>
+      <Image source={flagsArt} style={{ width: screenWidth, height: (screenWidth * ART_HEIGHT) / ART_WIDTH }} />
       <View style={styles.fade}>
         {Array.from({ length: FADE_STEPS }, (_, step) => (
           <View key={step} style={[styles.fadeStep, { backgroundColor: fadeColor, opacity: (step + 1) / FADE_STEPS }]} />
@@ -32,26 +29,6 @@ const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
     backgroundColor: colors.background,
-  },
-  grid: {
-    position: 'absolute',
-    top: -60,
-    left: -80,
-    width: COLUMNS * 102,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    transform: [{ rotate: '-10deg' }],
-  },
-  tile: {
-    width: 102,
-    height: 79,
-    padding: 2,
-  },
-  flag: {
-    flex: 1,
-    borderWidth: 3,
-    borderColor: colors.border,
-    resizeMode: 'cover',
   },
   fade: {
     position: 'absolute',
