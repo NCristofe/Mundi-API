@@ -1,20 +1,29 @@
 import { useEffect, useState } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, View, useWindowDimensions } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import CountryList from '../../components/CountryList/CountryList.jsx'
+import FlagMosaic from '../../components/FlagMosaic/FlagMosaic.jsx'
+import GlobeWithClouds from '../../components/GlobeWithClouds/GlobeWithClouds.jsx'
+import HeroText from '../../components/HeroText/HeroText.jsx'
 import Loading from '../../components/Loading/Loading.jsx'
+import PixelBox from '../../components/PixelBox/PixelBox.jsx'
 import SearchBar from '../../components/SearchBar/SearchBar.jsx'
+import { colors } from '../../components/theme.js'
 import { useFavorites } from '../../context/FavoritesContext.jsx'
 import { searchCountries } from '../../services/countriesApi.js'
 
-const HEADER_HEIGHT = 60
-const INTRO_PADDING_TOP = 28
-const SEARCH_BAR_TOP_FROM_SCREEN = 567
+const heart = require('../../assets/icons/heart.png')
+
+// Proporções extraídas da tela inicial do Figma (a altura da tela é a referência)
+const GUTTER = 20
+const MOSAIC_RATIO = 0.5
+const SEARCH_RATIO = 0.53
+const GLOBE_RATIO = 0.79
 const SEARCH_DEBOUNCE_MS = 400
 
 export default function Home() {
   const insets = useSafeAreaInsets()
-  const [introHeaderHeight, setIntroHeaderHeight] = useState(0)
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions()
   const [countries, setCountries] = useState([])
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
@@ -47,45 +56,43 @@ export default function Home() {
     ? countries.filter((country) => favoriteCodes.has(country.code))
     : countries
 
-  const searchRowMarginTop = Math.max(
-    0,
-    SEARCH_BAR_TOP_FROM_SCREEN - insets.top - HEADER_HEIGHT - INTRO_PADDING_TOP - introHeaderHeight,
-  )
+  // Sem texto na busca, a tela mostra o texto de destaque e o globo.
+  // Com busca (ou filtro de favoritos), a área abaixo da busca vira a lista de países.
+  const showResults = query.trim().length > 0 || showFavoritesOnly
+  const showList = showResults && !loading && !error
+
+  const mosaicHeight = Math.round(screenHeight * MOSAIC_RATIO)
+  const searchTop = Math.round(screenHeight * SEARCH_RATIO)
+  const globeTop = Math.round(screenHeight * GLOBE_RATIO)
+  const globeWidth = Math.min(screenWidth - 20, 394)
 
   return (
     <View style={styles.container}>
-      <View style={styles.intro}>
-        <View onLayout={(event) => setIntroHeaderHeight(event.nativeEvent.layout.height)}>
-          <Text style={styles.eyebrow}>EXPLORE O MUNDO</Text>
-          <Text accessibilityRole="header" style={styles.title}>Descubra novos lugares.</Text>
-          <Text style={styles.description}>Encontre países e conheça o que faz cada lugar único.</Text>
-        </View>
-        <View style={[styles.searchRow, { marginTop: searchRowMarginTop }]}>
-          <SearchBar value={query} onChange={setQuery} style={styles.searchInput} />
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={
-              showFavoritesOnly ? 'Mostrar todos os países' : 'Mostrar apenas favoritos'
-            }
-            onPress={() => setShowFavoritesOnly((current) => !current)}
-            style={[styles.favoriteButton, showFavoritesOnly && styles.favoriteButtonActive]}
-          >
-            <Text style={[styles.favoriteIcon, showFavoritesOnly && styles.favoriteIconActive]}>
-              {showFavoritesOnly ? '★' : '☆'}
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-      {loading ? <Loading /> : null}
-      {error ? (
-        <View style={styles.errorBox}>
-          <Text style={styles.errorText}>{error}</Text>
-          <Pressable accessibilityRole="button" onPress={() => loadCountries()} style={styles.retryButton}>
-            <Text style={styles.retryText}>Tentar novamente</Text>
-          </Pressable>
-        </View>
+      <FlagMosaic height={mosaicHeight} style={styles.mosaic} />
+
+      {!showResults ? (
+        <GlobeWithClouds width={globeWidth} style={[styles.globe, { top: globeTop, left: (screenWidth - globeWidth) / 2 }]} />
       ) : null}
-      {!loading && !error ? <CountryList countries={filteredCountries} /> : null}
+
+      <View style={[styles.content, { paddingTop: searchTop, paddingBottom: insets.bottom }]}>
+        <View style={styles.searchRow}>
+          <SearchBar value={query} onChange={setQuery} style={styles.searchInput} />
+          <PixelBox
+            onPress={() => setShowFavoritesOnly((current) => !current)}
+            style={styles.favoriteButton}
+            contentStyle={showFavoritesOnly ? styles.favoriteActive : null}
+            accessibilityLabel={showFavoritesOnly ? 'Mostrar todos os países' : 'Mostrar apenas favoritos'}
+            accessibilityState={{ selected: showFavoritesOnly }}
+          >
+            <Image source={heart} style={styles.heart} />
+          </PixelBox>
+        </View>
+
+        {loading ? <Loading /> : null}
+
+        {showList ? <CountryList countries={filteredCountries} /> : null}
+        {!showResults ? <HeroText style={styles.hero} /> : null}
+      </View>
     </View>
   )
 }
@@ -93,30 +100,20 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
   },
-  intro: {
-    paddingTop: INTRO_PADDING_TOP,
-    paddingBottom: 8,
+  mosaic: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
-  eyebrow: {
-    marginBottom: 8,
-    color: '#176b55',
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 1,
+  globe: {
+    position: 'absolute',
   },
-  title: {
-    color: '#202a31',
-    fontSize: 30,
-    fontWeight: '700',
-    lineHeight: 36,
-  },
-  description: {
-    marginTop: 8,
-    marginBottom: 20,
-    color: '#59665f',
-    fontSize: 15,
-    lineHeight: 22,
+  content: {
+    flex: 1,
+    paddingHorizontal: GUTTER,
   },
   searchRow: {
     flexDirection: 'row',
@@ -129,45 +126,15 @@ const styles = StyleSheet.create({
   favoriteButton: {
     width: 48,
     height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#EBEBEB',
-    borderWidth: 5,
-    borderColor: '#000000',
-    borderRadius: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
   },
-  favoriteButtonActive: {
-    backgroundColor: '#176b55',
+  favoriteActive: {
+    backgroundColor: colors.backgroundAlt,
   },
-  favoriteIcon: {
-    fontSize: 22,
-    color: '#59665f',
+  heart: {
+    width: 28,
+    height: 28,
   },
-  favoriteIconActive: {
-    color: '#fff',
-  },
-  errorBox: {
-    paddingVertical: 20,
-  },
-  errorText: {
-    color: '#9b332b',
-    fontSize: 15,
-  },
-  retryButton: {
-    alignSelf: 'flex-start',
-    marginTop: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    backgroundColor: '#176b55',
-    borderRadius: 6,
-  },
-  retryText: {
-    color: '#fff',
-    fontWeight: '700',
+  hero: {
+    marginTop: 40,
   },
 })

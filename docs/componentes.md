@@ -121,17 +121,18 @@ Bloco de informação: título em cima; ícone + valor embaixo. Mostra `—` qua
 ## Ilustração
 
 ### HeroText
-Texto grande com sombra branca. Padrão: "Digite o nome de um país".
+Imagem do texto "Digite o nome de um país" (arte do Figma, `assets/images/digite-o-nome.png`), no tamanho nativo de 313px e reduzida só em telas estreitas. Prop `style`.
 
 ### GlobeWithClouds
 Globo pixel com duas nuvens, nas proporções da Splashscreen. Prop `width` (padrão `394`); a altura é calculada.
 
+Para animar cada parte separadamente, passe `Animated.Value`s nos estilos `globeStyle`, `leftCloudStyle` e `rightCloudStyle` (são aplicados em wrappers, então não sobrescrevem a rotação da nuvem da direita). Veja `pages/Splash/Splash.jsx`.
+
 ### FlagMosaic
-Mosaico inclinado (-10°) de bandeiras com fade na parte de baixo.
+Arte do mosaico inclinado de bandeiras (`assets/images/bandeiras.png`, exportada do Figma) com fade na parte de baixo. A arte começa no topo e é cortada pela parte de baixo do `height`.
 
 | Prop | Tipo | Padrão |
 |---|---|---|
-| `flags` | string[] (URLs) | `[]` |
 | `height` | number | `360` |
 | `fadeColor` | string | `colors.background` |
 

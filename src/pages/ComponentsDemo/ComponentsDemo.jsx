@@ -117,7 +117,7 @@ export default function ComponentsDemo() {
           </Section>
 
           <Section title="FlagMosaic">
-            <FlagMosaic flags={countries.map((country) => country.flagUrl).filter(Boolean)} height={260} />
+            <FlagMosaic height={260} />
           </Section>
 
           <Section title="HeroText">

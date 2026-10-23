@@ -42,7 +42,9 @@ As bandeiras **não** são assets: vêm da API (`flagUrl`).
 
 ## Decisões e diferenças em relação ao Figma
 
-- **FlagMosaic:** o mosaico original do Figma não pôde ser exportado (limite de chamadas do plano Starter do Figma MCP). O componente monta o mosaico com bandeiras da API. Para usar a arte original, exporte o nó `75:10875` como PNG.
+- **FlagMosaic:** usa a arte exportada do nó `75:10875` do Figma (`assets/images/bandeiras.png`). Antes, o mosaico era montado com bandeiras da API.
+- **HeroText:** usa a arte do texto exportada do Figma (`assets/images/digite-o-nome.png`), no lugar da fonte pixel.
+- **Coração da Home:** usa `assets/icons/heart.png` (28px). Fica com fundo `backgroundAlt` quando o filtro de favoritos está ativo.
 - **ViewToggle:** o Figma não define estado selecionado; o ícone inativo fica cinza (`colors.placeholder`).
 - **CountryGridCard:** o coração fica sobreposto no canto superior direito da bandeira.
 - **PixelBox pressionado:** desloca 3px na direção da sombra, como feedback de toque (não existe no Figma).

@@ -27,7 +27,8 @@ src/
 ├── components/         um componente por pasta + theme.js (tokens)
 ├── context/            FavoritesContext
 ├── pages/
-│   ├── Home/           tela inicial atual
+│   ├── Splash/         splashscreen animada (globo e nuvens, ~3,7s), chama onFinish ao terminar
+│   ├── Home/           tela inicial (mosaico de bandeiras, busca, globo)
 │   └── ComponentsDemo/ vitrine dos componentes
 ├── services/
 │   └── countriesApi.js cliente axios da REST Countries v5
