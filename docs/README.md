@@ -29,6 +29,7 @@ src/
 ├── pages/
 │   ├── Splash/         splashscreen animada (globo e nuvens, ~3,7s), chama onFinish ao terminar
 │   ├── Home/           tela inicial (mosaico de bandeiras, busca, globo)
+│   ├── Favorites/      tela de favoritos (busca, lista e grade)
 │   └── ComponentsDemo/ vitrine dos componentes
 ├── services/
 │   └── countriesApi.js cliente axios da REST Countries v5
