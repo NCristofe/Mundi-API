@@ -49,7 +49,7 @@ Campo de busca com ícone de lupa. Mantém a mesma interface da versão anterior
 | `value` | string | — |
 | `onChange` | `(texto) => void` | — |
 | `onSubmit` | function | — |
-| `placeholder` | string | `'Pesquise o país'` |
+| `placeholder` | string | `'Pesquise o país..'` |
 | `style` | style | — |
 
 ### FavoriteButton
@@ -121,7 +121,7 @@ Bloco de informação: título em cima; ícone + valor embaixo. Mostra `—` qua
 ## Ilustração
 
 ### HeroText
-Imagem do texto "Digite o nome de um país" (arte do Figma, `assets/images/digite-o-nome.png`), no tamanho nativo de 313px e reduzida só em telas estreitas. Prop `style`.
+Texto de destaque em fonte pixel com sombra branca. Padrão: "Descubra cada país do mundo". Props `children`, `size` (padrão `24`) e `style`.
 
 ### GlobeWithClouds
 Globo pixel com duas nuvens, nas proporções da Splashscreen. Prop `width` (padrão `394`); a altura é calculada.
