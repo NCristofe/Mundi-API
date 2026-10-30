@@ -1,29 +1,24 @@
-import { Image, StyleSheet, useWindowDimensions } from 'react-native'
+import { StyleSheet } from 'react-native'
+import PixelText from '../PixelText/PixelText.jsx'
+import { colors } from '../theme.js'
 
-const heroText = require('../../assets/images/digite-o-nome.png')
-
-// Tamanho nativo da arte exportada do Figma (313×52); reduz só quando a tela é estreita
-const HERO_WIDTH = 313
-const HERO_HEIGHT = 52
-const SIDE_MARGIN = 40
-
-// Texto de destaque da tela inicial ("Digite o nome de um país"), usando a arte do Figma
-export default function HeroText({ style }) {
-  const { width: screenWidth } = useWindowDimensions()
-  const width = Math.min(HERO_WIDTH, screenWidth - SIDE_MARGIN)
-
+export default function HeroText({ children = 'Descubra cada\npaís do mundo', size = 24, style }) {
   return (
-    <Image
-      source={heroText}
+    <PixelText
+      size={size}
       accessibilityRole="header"
-      accessibilityLabel="Digite o nome de um país"
-      style={[styles.text, { width, height: (width * HERO_HEIGHT) / HERO_WIDTH }, style]}
-    />
+      style={[styles.text, { lineHeight: Math.round(size * 1.1) }, style]}
+    >
+      {children}
+    </PixelText>
   )
 }
 
 const styles = StyleSheet.create({
   text: {
-    alignSelf: 'center',
+    color: colors.border,
+    textShadowColor: colors.white,
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 1,
   },
 })
