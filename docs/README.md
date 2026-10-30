@@ -27,8 +27,11 @@ src/
 ├── components/         um componente por pasta + theme.js (tokens)
 ├── context/            FavoritesContext
 ├── pages/
-│   ├── Splash/         splashscreen animada (globo e nuvens, ~3,7s), chama onFinish ao terminar
+│   ├── Splash/         splashscreen animada (globo gira, nuvens entram depois, ~4,5s), chama onFinish ao terminar
 │   ├── Home/           tela inicial (mosaico de bandeiras, busca, globo)
+│   ├── CountryResult/  resultado da pesquisa (dados do país, mapa e nova busca)
+│   ├── CountryMap/     mapa do país (Leaflet em WebView, com imagens da Esri)
+│   ├── Favorites/      tela de favoritos (busca local e lista)
 │   └── ComponentsDemo/ vitrine dos componentes
 ├── services/
 │   └── countriesApi.js cliente axios da REST Countries v5
