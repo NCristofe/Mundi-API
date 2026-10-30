@@ -146,7 +146,7 @@ Globo pixel com duas nuvens, nas proporções da Splashscreen. Prop `width` (pad
 Para animar cada parte separadamente, passe `Animated.Value`s nos estilos `globeStyle`, `leftCloudStyle` e `rightCloudStyle` (são aplicados em wrappers, então não sobrescrevem a rotação da nuvem da direita). Veja `pages/Splash/Splash.jsx`.
 
 ### FlagMosaic
-Arte do mosaico inclinado de bandeiras (`assets/images/bandeiras.png`, exportada do Figma) com fade na parte de baixo. A arte começa no topo e é cortada pela parte de baixo do `height`.
+Carrossel inclinado (-10°) de bandeiras (`assets/images/flags/`), com fileiras que deslizam em loop em direções alternadas e fade na parte de baixo.
 
 | Prop | Tipo | Padrão |
 |---|---|---|
