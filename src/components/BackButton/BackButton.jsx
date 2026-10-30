@@ -1,6 +1,6 @@
 import { Image, Pressable, StyleSheet } from 'react-native'
 
-const circle = require('../../assets/icons/back-circle.png')
+const circle = require('../../assets/icons/back-circle-surface.png')
 const arrow = require('../../assets/icons/back-arrow.png')
 
 export default function BackButton({ onPress, style }) {

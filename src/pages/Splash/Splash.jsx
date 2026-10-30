@@ -11,7 +11,7 @@ const HOLD_MS = 400
 const EXIT_MS = 500
 
 // Splashscreen animada: globo, nuvem esquerda e nuvem direita têm valores animados próprios.
-// Linha do tempo: entrada (~1,25s) → flutuação (~1,6s) → pausa → saída (0,5s) ≈ 3,7s.
+// Linha do tempo: giro do globo (1,1s) → nuvens (~0,95s) → flutuação (~1,6s) → pausa → saída (0,5s) ≈ 4,55s.
 export default function Splash({ onFinish }) {
   const { width: screenWidth } = useWindowDimensions()
   const globeWidth = Math.min(screenWidth - GUTTER * 2, MAX_GLOBE_WIDTH)
@@ -47,7 +47,7 @@ export default function Splash({ onFinish }) {
       )
 
     const animation = Animated.sequence([
-      // 1. Entrada: o globo surge e gira até o lugar; as nuvens entram pelos lados em momentos diferentes
+      // 1. Entrada: o globo surge dando uma volta completa
       Animated.parallel([
         Animated.timing(globeScale, {
           toValue: 1,
@@ -58,21 +58,22 @@ export default function Splash({ onFinish }) {
         Animated.timing(globeOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
         Animated.timing(globeSpin, {
           toValue: 1,
+          duration: 1100,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ]),
+
+      // 2. Com o globo parado, as nuvens entram pelos lados em momentos diferentes
+      Animated.parallel([
+        Animated.timing(leftCloudX, {
+          toValue: 0,
           duration: 700,
           easing: Easing.out(Easing.cubic),
           useNativeDriver: true,
         }),
         Animated.sequence([
-          Animated.delay(300),
-          Animated.timing(leftCloudX, {
-            toValue: 0,
-            duration: 700,
-            easing: Easing.out(Easing.cubic),
-            useNativeDriver: true,
-          }),
-        ]),
-        Animated.sequence([
-          Animated.delay(550),
+          Animated.delay(250),
           Animated.timing(rightCloudX, {
             toValue: 0,
             duration: 700,
@@ -82,7 +83,7 @@ export default function Splash({ onFinish }) {
         ]),
       ]),
 
-      // 2. Flutuação: cada parte sobe e desce no seu ritmo (nuvens em fases opostas)
+      // 3. Flutuação: cada parte sobe e desce no seu ritmo (nuvens em fases opostas)
       Animated.parallel([
         float(globeFloat, -8),
         float(leftCloudFloat, -6),
@@ -91,7 +92,7 @@ export default function Splash({ onFinish }) {
 
       Animated.delay(HOLD_MS),
 
-      // 3. Saída: o globo encolhe e cada nuvem sai pelo seu lado
+      // 4. Saída: o globo encolhe e cada nuvem sai pelo seu lado
       Animated.parallel([
         Animated.timing(globeScale, {
           toValue: 0,
@@ -128,7 +129,7 @@ export default function Splash({ onFinish }) {
       { scale: globeScale },
       { translateY: globeFloat },
       {
-        rotate: globeSpin.interpolate({ inputRange: [0, 1], outputRange: ['-18deg', '0deg'] }),
+        rotate: globeSpin.interpolate({ inputRange: [0, 1], outputRange: ['-360deg', '0deg'] }),
       },
     ],
   }

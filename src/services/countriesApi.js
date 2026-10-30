@@ -44,6 +44,8 @@ export function normalizeCountry(raw) {
     language: language ? language.native_name ?? language.name : null,
     callingCode: callingCode ? `+${callingCode}` : null,
     area: raw.area?.kilometers != null ? `${numberFormat.format(raw.area.kilometers)} km²` : null,
+    areaKm: raw.area?.kilometers ?? null,
+    coordinates: raw.coordinates ?? null,
     hemisphere: getHemisphere(raw.coordinates),
     mapUrl:
       raw.links?.google_maps ??
@@ -54,4 +56,11 @@ export function normalizeCountry(raw) {
 export async function searchCountries(query, { limit = 25, offset = 0 } = {}) {
   const { data } = await api.get('', { params: { q: query || undefined, limit, offset } })
   return data.data.objects.map(normalizeCountry)
+}
+
+// Prefere o nome exato, porque a API também devolve países com nomes parecidos
+export async function findCountry(query) {
+  const results = await searchCountries(query)
+  const name = query.trim().toLocaleLowerCase()
+  return results.find((country) => country.name?.toLocaleLowerCase() === name) ?? results[0] ?? null
 }

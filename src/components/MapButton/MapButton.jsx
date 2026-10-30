@@ -1,6 +1,7 @@
 import { Image, Linking, StyleSheet, View } from 'react-native'
 import PixelBox from '../PixelBox/PixelBox.jsx'
 import PixelText from '../PixelText/PixelText.jsx'
+import { colors } from '../theme.js'
 
 const globeIcon = require('../../assets/icons/globe.png')
 
@@ -9,7 +10,7 @@ export default function MapButton({ url, onPress, style }) {
 
   return (
     <View style={[styles.row, style]}>
-      <PixelBox style={styles.label} onPress={handlePress} accessibilityLabel="Ver no mapa">
+      <PixelBox style={styles.label} contentStyle={styles.labelContent} onPress={handlePress} accessibilityLabel="Ver no mapa">
         <PixelText>Ver no Mapa →</PixelText>
       </PixelBox>
       <PixelBox style={styles.iconBox} onPress={handlePress} accessibilityLabel="Ver no mapa">
@@ -29,12 +30,15 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 56,
   },
+  labelContent: {
+    backgroundColor: colors.surfaceAlt,
+  },
   iconBox: {
     width: 57,
     height: 57,
   },
   icon: {
-    width: 35,
-    height: 35,
+    width: 42,
+    height: 42,
   },
 })

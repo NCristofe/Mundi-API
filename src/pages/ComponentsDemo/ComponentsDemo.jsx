@@ -12,6 +12,7 @@ import FlagMosaic from '../../components/FlagMosaic/FlagMosaic.jsx'
 import GlobeWithClouds from '../../components/GlobeWithClouds/GlobeWithClouds.jsx'
 import HeroText from '../../components/HeroText/HeroText.jsx'
 import InfoField from '../../components/InfoField/InfoField.jsx'
+import Loading from '../../components/Loading/Loading.jsx'
 import MapButton from '../../components/MapButton/MapButton.jsx'
 import PixelBox from '../../components/PixelBox/PixelBox.jsx'
 import PixelText from '../../components/PixelText/PixelText.jsx'
@@ -108,7 +109,7 @@ export default function ComponentsDemo() {
               />
             </View>
             <SearchBar placeholder="Pesquisar nos favoritos" />
-            {loading ? <ActivityIndicator color={colors.text} /> : null}
+            {loading ? <Loading /> : null}
             {error ? (
               <PixelText size={10} style={styles.error}>
                 {error}
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   error: {
-    color: '#C00000',
+    color: colors.error,
   },
   center: {
     alignSelf: 'center',

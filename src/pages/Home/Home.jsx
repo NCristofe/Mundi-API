@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react'
-import { Image, StyleSheet, View, useWindowDimensions } from 'react-native'
+import { StyleSheet, View, useWindowDimensions } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import CountryList from '../../components/CountryList/CountryList.jsx'
+import { FavoriteIcon } from '../../components/FavoriteButton/FavoriteButton.jsx'
 import FlagMosaic from '../../components/FlagMosaic/FlagMosaic.jsx'
 import GlobeWithClouds from '../../components/GlobeWithClouds/GlobeWithClouds.jsx'
 import HeroText from '../../components/HeroText/HeroText.jsx'
 import Loading from '../../components/Loading/Loading.jsx'
 import PixelBox from '../../components/PixelBox/PixelBox.jsx'
+import PixelText from '../../components/PixelText/PixelText.jsx'
 import SearchBar from '../../components/SearchBar/SearchBar.jsx'
 import { colors } from '../../components/theme.js'
-import { useFavorites } from '../../context/FavoritesContext.jsx'
-import { searchCountries } from '../../services/countriesApi.js'
-
-const heart = require('../../assets/icons/heart.png')
+import { findCountry, searchCountries } from '../../services/countriesApi.js'
 
 // Medidas da tela inicial do Figma, em um frame de 402×874
 const FRAME_WIDTH = 402
@@ -21,15 +20,13 @@ const MAX_SCALE = 1.25 // evita elementos gigantes em tablet e web
 const GUTTER = 20
 const SEARCH_DEBOUNCE_MS = 400
 
-export default function Home() {
+export default function Home({ onSelectCountry, onOpenFavorites }) {
   const insets = useSafeAreaInsets()
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
   const [countries, setCountries] = useState([])
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
-  const { favorites } = useFavorites()
 
   async function loadCountries(search = query) {
     setLoading(true)
@@ -44,21 +41,33 @@ export default function Home() {
     }
   }
 
+  async function handleSubmit() {
+    const search = query.trim()
+    if (!search) return
+
+    setLoading(true)
+    setError('')
+
+    try {
+      const found = await findCountry(search)
+      if (found) onSelectCountry(found)
+      else setError('Nenhum país encontrado.')
+    } catch {
+      setError('Não foi possível buscar o país.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // A busca acontece na API; o debounce evita uma requisição por tecla
   useEffect(() => {
     const timer = setTimeout(() => loadCountries(query), SEARCH_DEBOUNCE_MS)
     return () => clearTimeout(timer)
   }, [query])
 
-  const favoriteCodes = new Set(favorites.map((favorite) => favorite.code))
-
-  const filteredCountries = showFavoritesOnly
-    ? countries.filter((country) => favoriteCodes.has(country.code))
-    : countries
-
   // Sem texto na busca, a tela mostra o texto de destaque e o globo.
-  // Com busca (ou filtro de favoritos), a área abaixo da busca vira a lista de países.
-  const showResults = query.trim().length > 0 || showFavoritesOnly
+  // Com busca, a área abaixo da busca vira a lista de países.
+  const showResults = query.trim().length > 0
   const showList = showResults && !loading && !error
 
   // Tamanhos seguem a largura da tela; posições verticais seguem a altura
@@ -84,21 +93,34 @@ export default function Home() {
 
       <View style={[styles.content, { paddingTop: searchTop, paddingBottom: insets.bottom }]}>
         <View style={[styles.searchRow, { width: 327 * scale, gap: 9 * scale }]}>
-          <SearchBar value={query} onChange={setQuery} style={[styles.searchInput, { height: searchHeight }]} />
+          <SearchBar
+            value={query}
+            onChange={setQuery}
+            onSubmit={handleSubmit}
+            style={[styles.searchInput, { height: searchHeight }]}
+          />
           <PixelBox
-            onPress={() => setShowFavoritesOnly((current) => !current)}
+            onPress={onOpenFavorites}
             style={{ width: searchHeight, height: searchHeight }}
-            contentStyle={showFavoritesOnly ? styles.favoriteActive : null}
-            accessibilityLabel={showFavoritesOnly ? 'Mostrar todos os países' : 'Mostrar apenas favoritos'}
-            accessibilityState={{ selected: showFavoritesOnly }}
+            accessibilityLabel="Abrir favoritos"
           >
-            <Image source={heart} style={{ width: 28 * scale, height: 28 * scale }} />
+            <FavoriteIcon active size={28 * scale} />
           </PixelBox>
         </View>
 
         {showResults && loading ? <Loading /> : null}
 
-        {showList ? <CountryList countries={filteredCountries} /> : null}
+        {showResults && error ? (
+          <PixelText size={10} style={styles.error}>
+            {error}
+          </PixelText>
+        ) : null}
+
+        {showList ? (
+          <View style={[styles.results, { width: 327 * scale }]}>
+            <CountryList countries={countries} onSelectCountry={onSelectCountry} />
+          </View>
+        ) : null}
         {!showResults ? (
           <HeroText size={24 * scale} style={{ marginTop: yOf(574) - searchTop - searchHeight }} />
         ) : null}
@@ -133,7 +155,12 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
   },
-  favoriteActive: {
-    backgroundColor: colors.backgroundAlt,
+  results: {
+    flex: 1,
+    alignSelf: 'center',
+  },
+  error: {
+    marginTop: 20,
+    color: colors.error,
   },
 })

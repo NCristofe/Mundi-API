@@ -2,7 +2,7 @@ import { Image, StyleSheet } from 'react-native'
 import PixelBox from '../PixelBox/PixelBox.jsx'
 
 const heartFilled = require('../../assets/icons/heart-filled.png')
-const heartOutline = require('../../assets/icons/heart-outline.png')
+const heartOutline = require('../../assets/icons/heart-empty.png')
 
 export default function FavoriteButton({ active = false, onPress, width = 48, height = 48, iconSize = 28, style }) {
   return (
