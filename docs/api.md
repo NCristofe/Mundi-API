@@ -57,6 +57,6 @@ Campos ausentes na API ficam `null`.
 - **Moeda:** o nome vem só em inglês.
 - **Hemisfério:** calculado a partir de `coordinates` (centro do país), então países que cruzam o Equador/Greenwich aparecem no hemisfério do seu centro.
 
-## Uso na Home
+## Uso nas telas
 
-A `Home` pesquisa direto na API conforme o usuário digita, com debounce de 400ms. O filtro "somente favoritos" é aplicado localmente sobre o resultado, comparando `code`.
+A `Home` pesquisa direto na API conforme o usuário digita, com debounce de 400ms. A tela `Favorites` filtra localmente os países armazenados em `FavoritesContext`, comparando os nomes em português sem diferenciar acentos.
