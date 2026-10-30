@@ -74,6 +74,20 @@ Par de botões grade/lista da tela de favoritos.
 |---|---|---|
 | `value` | `'grid' \| 'list'` | `'grid'` |
 | `onChange` | `(modo) => void` | — |
+| `showGrid` | boolean | `true` |
+
+Use `showGrid={false}` quando a tela exibir somente o modo lista; o ícone de lista permanece selecionado e sem ação.
+
+### ConfirmDialog
+Popup de confirmação no estilo do `PixelBox`. Tocar fora ou usar o botão Voltar do Android cancela.
+
+| Prop | Tipo | Padrão |
+|---|---|---|
+| `visible` | boolean | — |
+| `message` | string | — |
+| `confirmLabel` | string | `'Confirmar'` |
+| `cancelLabel` | string | `'Cancelar'` |
+| `onConfirm` / `onCancel` | function | — |
 
 ## País
 
@@ -93,7 +107,10 @@ Ambos aceitam:
 | `onToggleFavorite` | function | Toque no coração |
 
 ### CountryHeader
-Topo da tela de resultado: nome + bandeira grande (254px). Prop: `country`.
+Topo da tela de resultado: nome + bandeira grande (254px). Tocar na bandeira abre o `FlagViewer`. Prop: `country`.
+
+### FlagViewer
+Mostra a bandeira inteira e ampliada sobre a tela, respeitando a proporção de cada país. Fecha ao tocar na tela, na seta ou no botão Voltar do Android. Props: `visible`, `uri`, `name`, `onClose`.
 
 ### MapButton
 "Ver no Mapa →" + ícone de globo.
@@ -136,16 +153,12 @@ Arte do mosaico inclinado de bandeiras (`assets/images/bandeiras.png`, exportada
 | `height` | number | `360` |
 | `fadeColor` | string | `colors.background` |
 
-## Componentes anteriores (mantidos)
-
-Usados pela `Home` atual, ainda no visual antigo:
+## Listas e estados
 
 | Componente | Uso |
 |---|---|
-| `Header` | Barra de título do `App` |
-| `CountryList` | `FlatList` de `CountryCard` (chave: `country.code`) |
-| `CountryCard` | Card com bandeira, nome e capital |
-| `Loading` | Indicador de carregamento com texto |
+| `CountryList` | `FlatList` de `CountryListItem` ligada ao `FavoritesContext` (chave: `country.code`). Props: `countries`, `onSelectCountry` |
+| `Loading` | Texto de carregamento em fonte pixel. Prop: `label` |
 
 ## Mapa Figma → componente
 
