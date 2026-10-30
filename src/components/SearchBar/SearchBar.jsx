@@ -4,13 +4,13 @@ import { colors, fonts } from '../theme.js'
 
 const searchIcon = require('../../assets/icons/search.png')
 
-export default function SearchBar({ value, onChange, onSubmit, placeholder = 'Pesquise o país', style }) {
+export default function SearchBar({ value, onChange, onSubmit, placeholder = 'Pesquise o país..', style }) {
   return (
     <PixelBox style={[styles.wrapper, style]} contentStyle={styles.content}>
       <Image source={searchIcon} style={styles.icon} />
       <TextInput
         accessibilityLabel={placeholder}
-        style={styles.input}
+        style={[styles.input, !value && styles.inputEmpty]}
         value={value}
         onChangeText={onChange}
         onSubmitEditing={onSubmit}
@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    paddingHorizontal: 6,
-    gap: 10,
+    paddingHorizontal: 8,
+    gap: 7,
   },
   icon: {
     width: 22,
@@ -41,8 +41,14 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     paddingVertical: 0,
+    paddingHorizontal: 0,
     color: colors.text,
     fontFamily: fonts.pixel,
-    fontSize: 13,
+    fontSize: 10,
+    textAlignVertical: 'center',
+    includeFontPadding: false,
+  },
+  inputEmpty: {
+    textAlign: 'center',
   },
 })
