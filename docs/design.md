@@ -33,19 +33,21 @@ Fonte: Figma [Design UI - UX](https://www.figma.com/design/xxALgJnXR0Mk4vuIMhTme
 |---|---|
 | `assets/images/globe.png`, `cloud.png` | Imagens originais da Splashscreen |
 | `assets/icons/capital.png` … `area.png`, `globe.png`, `heart-filled.png` | Recortados da folha de sprites do Figma (células de 32px) |
-| `assets/icons/heart-outline.png`, `back-circle.png` | Recortados de uma segunda folha de sprites |
+| `assets/icons/heart-empty.png`, `back-circle-surface.png` | Recortados de uma segunda folha de sprites; o coração vazio tem o miolo transparente e o círculo usa a cor dos cards |
 | `assets/icons/search.png`, `back-arrow.png` | Vetores do Figma rasterizados para PNG |
 
 Os ícones são pixel art ampliados por *nearest-neighbor* (4× ou 6×) para continuarem nítidos. Os PNGs evitam a dependência de `react-native-svg`.
 
-As bandeiras **não** são assets: vêm da API (`flagUrl`).
+As bandeiras dos países vêm da API (`flagUrl`). A exceção é o carrossel da Home, que usa as bandeiras de `assets/images/flags/` para funcionar sem internet.
 
 ## Decisões e diferenças em relação ao Figma
 
-- **FlagMosaic:** usa a arte exportada do nó `75:10875` do Figma (`assets/images/bandeiras.png`). Antes, o mosaico era montado com bandeiras da API.
+- **FlagMosaic:** no Figma é estático (nó `75:10875`); no app é um carrossel em movimento, com bandeiras individuais nas mesmas medidas e inclinação.
 - **HeroText:** usa a fonte pixel com o texto "Descubra cada país do mundo", no lugar de "Digite o nome de um país" do Figma.
 - **Barra de navegação:** fica oculta no Android, para a barra de gestos não aparecer como uma linha branca sobre o globo.
-- **Coração da Home:** usa `assets/icons/heart.png` (28px). Fica com fundo `backgroundAlt` quando o filtro de favoritos está ativo.
+- **Coração da Home:** usa o `FavoriteIcon` preenchido (28px), o mesmo das outras telas, e abre a tela de favoritos.
+- **Balão do mapa:** mantém o fundo preto do Figma, com fonte pixel e cantos retos para seguir o restante do app.
+- **Coração do resultado:** não existe no Figma; foi adicionado no topo da tela para permitir favoritar o país.
 - **ViewToggle:** o Figma não define estado selecionado; o ícone inativo fica cinza (`colors.placeholder`).
 - **CountryGridCard:** o coração fica sobreposto no canto superior direito da bandeira.
 - **PixelBox pressionado:** desloca 3px na direção da sombra, como feedback de toque (não existe no Figma).
