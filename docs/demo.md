@@ -21,7 +21,8 @@ Depois rode `npm start`. O `src/main.jsx` registra a `ComponentsDemo` no lugar d
 | PixelBox / PixelText | Caixa estática e caixa pressionável |
 | BackButton / ViewToggle | O voltar limpa o país selecionado; o toggle alterna grade/lista |
 | SearchBar / FavoriteButton | A busca consulta a API (debounce de 400ms); o coração favorita o país selecionado |
-| FlagMosaic / HeroText / GlobeWithClouds | Estáticos (arte do Figma) |
+| FlagMosaic | Carrossel animado de bandeiras |
+| HeroText / GlobeWithClouds | Estáticos |
 | CountryListItem / CountryGridCard | Os 6 primeiros resultados; toque seleciona, coração favorita |
 | CountryHeader / MapButton / InfoField | Detalhes do país selecionado; "Ver no Mapa" abre o Google Maps |
 
