@@ -24,7 +24,7 @@ Fonte: Figma [Design UI - UX](https://www.figma.com/design/xxALgJnXR0Mk4vuIMhTme
 |---|---|
 | HeroText | 24 |
 | Títulos/valores de `InfoField`, botões | 16 |
-| Placeholder da busca | 13 |
+| Placeholder da busca | 10 |
 | Nomes nos cards de favoritos | 8 |
 
 ## Assets
@@ -43,7 +43,8 @@ As bandeiras **não** são assets: vêm da API (`flagUrl`).
 ## Decisões e diferenças em relação ao Figma
 
 - **FlagMosaic:** usa a arte exportada do nó `75:10875` do Figma (`assets/images/bandeiras.png`). Antes, o mosaico era montado com bandeiras da API.
-- **HeroText:** usa a arte do texto exportada do Figma (`assets/images/digite-o-nome.png`), no lugar da fonte pixel.
+- **HeroText:** usa a fonte pixel com o texto "Descubra cada país do mundo", no lugar de "Digite o nome de um país" do Figma.
+- **Barra de navegação:** fica oculta no Android, para a barra de gestos não aparecer como uma linha branca sobre o globo.
 - **Coração da Home:** usa `assets/icons/heart.png` (28px). Fica com fundo `backgroundAlt` quando o filtro de favoritos está ativo.
 - **ViewToggle:** o Figma não define estado selecionado; o ícone inativo fica cinza (`colors.placeholder`).
 - **CountryGridCard:** o coração fica sobreposto no canto superior direito da bandeira.
