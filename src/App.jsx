@@ -1,7 +1,8 @@
 import { PressStart2P_400Regular, useFonts } from '@expo-google-fonts/press-start-2p'
+import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
-import { useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { useEffect, useState } from 'react'
+import { Platform, StyleSheet, View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { colors } from './components/theme.js'
 import { FavoritesProvider } from './context/FavoritesContext.jsx'
@@ -11,6 +12,11 @@ import Splash from './pages/Splash/Splash.jsx'
 export default function App() {
   const [fontsLoaded] = useFonts({ PressStart2P_400Regular })
   const [splashDone, setSplashDone] = useState(false)
+
+  // A barra de gestos do Android aparecia como uma linha branca sobre o globo
+  useEffect(() => {
+    if (Platform.OS === 'android') NavigationBar.setVisibilityAsync('hidden')
+  }, [])
 
   return (
     <SafeAreaProvider>
