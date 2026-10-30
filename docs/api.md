@@ -27,6 +27,9 @@ const paises = await searchCountries('brasil')
 
 Erros do axios são propagados (`err.response?.data?.message` traz a mensagem da API).
 
+### `findCountry(query)`
+Retorna um país para a tela de resultado: o de nome exato, senão o primeiro da busca, ou `null` se não houver nenhum.
+
 ### `normalizeCountry(raw)`
 Converte um objeto da v5 para o formato usado pelos componentes. Exportada para uso em testes ou outras chamadas.
 
@@ -44,6 +47,8 @@ Converte um objeto da v5 para o formato usado pelos componentes. Exportada para 
   language: 'português',                         // native_name do 1º idioma
   callingCode: '+55',
   area: '8.515.767 km²',
+  areaKm: 8515767,                               // número, usado para o zoom do mapa
+  coordinates: { lat: -10, lng: -55 },           // centro do país, usado no mapa
   hemisphere: 'Sul Ocidental',                   // pelas coordenadas do país
   mapUrl: 'https://goo.gl/maps/...',             // links.google_maps ou lat/lng
 }
@@ -57,6 +62,6 @@ Campos ausentes na API ficam `null`.
 - **Moeda:** o nome vem só em inglês.
 - **Hemisfério:** calculado a partir de `coordinates` (centro do país), então países que cruzam o Equador/Greenwich aparecem no hemisfério do seu centro.
 
-## Uso na Home
+## Uso nas telas
 
-A `Home` pesquisa direto na API conforme o usuário digita, com debounce de 400ms. O filtro "somente favoritos" é aplicado localmente sobre o resultado, comparando `code`.
+A `Home` pesquisa direto na API conforme o usuário digita, com debounce de 400ms. A tela `Favorites` filtra localmente os países armazenados em `FavoritesContext`, comparando os nomes em português sem diferenciar acentos.
