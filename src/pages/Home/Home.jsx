@@ -9,7 +9,6 @@ import Loading from '../../components/Loading/Loading.jsx'
 import PixelBox from '../../components/PixelBox/PixelBox.jsx'
 import SearchBar from '../../components/SearchBar/SearchBar.jsx'
 import { colors } from '../../components/theme.js'
-import { useFavorites } from '../../context/FavoritesContext.jsx'
 import { searchCountries } from '../../services/countriesApi.js'
 
 const heart = require('../../assets/icons/heart.png')
@@ -21,16 +20,13 @@ const SEARCH_RATIO = 0.53
 const GLOBE_RATIO = 0.79
 const SEARCH_DEBOUNCE_MS = 400
 
-export default function Home() {
+export default function Home({ onOpenFavorites }) {
   const insets = useSafeAreaInsets()
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
   const [countries, setCountries] = useState([])
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
-  const { favorites } = useFavorites()
-
   async function loadCountries(search = query) {
     setLoading(true)
     setError('')
@@ -50,15 +46,9 @@ export default function Home() {
     return () => clearTimeout(timer)
   }, [query])
 
-  const favoriteCodes = new Set(favorites.map((favorite) => favorite.code))
-
-  const filteredCountries = showFavoritesOnly
-    ? countries.filter((country) => favoriteCodes.has(country.code))
-    : countries
-
   // Sem texto na busca, a tela mostra o texto de destaque e o globo.
-  // Com busca (ou filtro de favoritos), a área abaixo da busca vira a lista de países.
-  const showResults = query.trim().length > 0 || showFavoritesOnly
+  // Com busca, a área abaixo da busca vira a lista de países.
+  const showResults = query.trim().length > 0
   const showList = showResults && !loading && !error
 
   const mosaicHeight = Math.round(screenHeight * MOSAIC_RATIO)
@@ -78,11 +68,9 @@ export default function Home() {
         <View style={styles.searchRow}>
           <SearchBar value={query} onChange={setQuery} style={styles.searchInput} />
           <PixelBox
-            onPress={() => setShowFavoritesOnly((current) => !current)}
+            onPress={onOpenFavorites}
             style={styles.favoriteButton}
-            contentStyle={showFavoritesOnly ? styles.favoriteActive : null}
-            accessibilityLabel={showFavoritesOnly ? 'Mostrar todos os países' : 'Mostrar apenas favoritos'}
-            accessibilityState={{ selected: showFavoritesOnly }}
+            accessibilityLabel="Abrir favoritos"
           >
             <Image source={heart} style={styles.heart} />
           </PixelBox>
@@ -90,7 +78,7 @@ export default function Home() {
 
         {loading ? <Loading /> : null}
 
-        {showList ? <CountryList countries={filteredCountries} /> : null}
+        {showList ? <CountryList countries={countries} /> : null}
         {!showResults ? <HeroText style={styles.hero} /> : null}
       </View>
     </View>
@@ -126,9 +114,6 @@ const styles = StyleSheet.create({
   favoriteButton: {
     width: 48,
     height: 48,
-  },
-  favoriteActive: {
-    backgroundColor: colors.backgroundAlt,
   },
   heart: {
     width: 28,
