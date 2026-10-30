@@ -74,6 +74,9 @@ Par de botões grade/lista da tela de favoritos.
 |---|---|---|
 | `value` | `'grid' \| 'list'` | `'grid'` |
 | `onChange` | `(modo) => void` | — |
+| `showGrid` | boolean | `true` |
+
+Use `showGrid={false}` quando a tela exibir somente o modo lista; o ícone de lista permanece selecionado e sem ação.
 
 ## País
 

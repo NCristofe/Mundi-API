@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BackButton from '../../components/BackButton/BackButton.jsx'
-import CountryGridCard from '../../components/CountryGridCard/CountryGridCard.jsx'
 import CountryListItem from '../../components/CountryListItem/CountryListItem.jsx'
 import PixelText from '../../components/PixelText/PixelText.jsx'
 import SearchBar from '../../components/SearchBar/SearchBar.jsx'
@@ -18,28 +17,20 @@ export default function Favorites({ onBack }) {
   const insets = useSafeAreaInsets()
   const { favorites, toggleFavorite } = useFavorites()
   const [query, setQuery] = useState('')
-  const [viewMode, setViewMode] = useState('grid')
-
   const filteredFavorites = useMemo(() => {
     const normalizedQuery = normalizeText(query.trim())
     return favorites.filter((country) => normalizeText(country.name).includes(normalizedQuery))
   }, [favorites, query])
 
   function renderCountry({ item }) {
-    const onToggleFavorite = () => toggleFavorite(item)
-
-    return viewMode === 'list' ? (
-      <CountryListItem country={item} favorite onToggleFavorite={onToggleFavorite} />
-    ) : (
-      <CountryGridCard country={item} favorite onToggleFavorite={onToggleFavorite} />
-    )
+    return <CountryListItem country={item} favorite onToggleFavorite={() => toggleFavorite(item)} />
   }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 16, paddingBottom: insets.bottom }]}>
       <View style={styles.header}>
         <BackButton onPress={onBack} />
-        <ViewToggle value={viewMode} onChange={setViewMode} />
+        <ViewToggle value="list" showGrid={false} />
       </View>
 
       <SearchBar
@@ -50,17 +41,14 @@ export default function Favorites({ onBack }) {
       />
 
       <FlatList
-        key={viewMode}
         data={filteredFavorites}
         keyExtractor={(country) => country.code}
         renderItem={renderCountry}
-        numColumns={viewMode === 'grid' ? 2 : 1}
         contentContainerStyle={[
           styles.list,
           filteredFavorites.length === 0 && styles.emptyList,
         ]}
-        columnWrapperStyle={viewMode === 'grid' ? styles.gridRow : undefined}
-        ItemSeparatorComponent={viewMode === 'list' ? () => <View style={styles.separator} /> : null}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
           <PixelText size={9} style={styles.emptyText}>
             Nenhum favorito encontrado.
@@ -100,9 +88,5 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 14,
-  },
-  gridRow: {
-    justifyContent: 'space-between',
-    marginBottom: 22,
   },
 })

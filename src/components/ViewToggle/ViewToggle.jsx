@@ -3,24 +3,26 @@ import PixelBox from '../PixelBox/PixelBox.jsx'
 import { colors } from '../theme.js'
 
 // Alterna entre "grid" (modo blocos) e "list" (modo lista) na tela de favoritos
-export default function ViewToggle({ value = 'grid', onChange, style }) {
+export default function ViewToggle({ value = 'grid', onChange, showGrid = true, style }) {
   return (
     <View style={[styles.row, style]}>
+      {showGrid ? (
+        <PixelBox
+          style={styles.button}
+          onPress={() => onChange?.('grid')}
+          accessibilityLabel="Modo blocos"
+          accessibilityState={{ selected: value === 'grid' }}
+        >
+          <View style={styles.grid}>
+            {[0, 1, 2, 3].map((index) => (
+              <View key={index} style={[styles.square, value !== 'grid' && styles.inactive]} />
+            ))}
+          </View>
+        </PixelBox>
+      ) : null}
       <PixelBox
         style={styles.button}
-        onPress={() => onChange?.('grid')}
-        accessibilityLabel="Modo blocos"
-        accessibilityState={{ selected: value === 'grid' }}
-      >
-        <View style={styles.grid}>
-          {[0, 1, 2, 3].map((index) => (
-            <View key={index} style={[styles.square, value !== 'grid' && styles.inactive]} />
-          ))}
-        </View>
-      </PixelBox>
-      <PixelBox
-        style={styles.button}
-        onPress={() => onChange?.('list')}
+        onPress={showGrid ? () => onChange?.('list') : undefined}
         accessibilityLabel="Modo lista"
         accessibilityState={{ selected: value === 'list' }}
       >
