@@ -5,12 +5,14 @@ import { StyleSheet, View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { colors } from './components/theme.js'
 import { FavoritesProvider } from './context/FavoritesContext.jsx'
+import Favorites from './pages/Favorites/Favorites.jsx'
 import Home from './pages/Home/Home.jsx'
 import Splash from './pages/Splash/Splash.jsx'
 
 export default function App() {
   const [fontsLoaded] = useFonts({ PressStart2P_400Regular })
   const [splashDone, setSplashDone] = useState(false)
+  const [showFavorites, setShowFavorites] = useState(false)
 
   return (
     <SafeAreaProvider>
@@ -18,7 +20,13 @@ export default function App() {
         <View style={styles.root}>
           <StatusBar style="dark" />
           {!splashDone ? <Splash onFinish={() => setSplashDone(true)} /> : null}
-          {splashDone && fontsLoaded ? <Home /> : null}
+          {splashDone && fontsLoaded ? (
+            showFavorites ? (
+              <Favorites onBack={() => setShowFavorites(false)} />
+            ) : (
+              <Home onOpenFavorites={() => setShowFavorites(true)} />
+            )
+          ) : null}
         </View>
       </FavoritesProvider>
     </SafeAreaProvider>
