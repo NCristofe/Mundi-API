@@ -14,11 +14,11 @@ import { searchCountries } from '../../services/countriesApi.js'
 
 const heart = require('../../assets/icons/heart.png')
 
-// Proporções extraídas da tela inicial do Figma (a altura da tela é a referência)
+// Medidas da tela inicial do Figma, em um frame de 402×874
+const FRAME_WIDTH = 402
+const FRAME_HEIGHT = 874
+const MAX_SCALE = 1.25 // evita elementos gigantes em tablet e web
 const GUTTER = 20
-const MOSAIC_RATIO = 0.5
-const SEARCH_RATIO = 0.53
-const GLOBE_RATIO = 0.79
 const SEARCH_DEBOUNCE_MS = 400
 
 export default function Home() {
@@ -61,37 +61,47 @@ export default function Home() {
   const showResults = query.trim().length > 0 || showFavoritesOnly
   const showList = showResults && !loading && !error
 
-  const mosaicHeight = Math.round(screenHeight * MOSAIC_RATIO)
-  const searchTop = Math.round(screenHeight * SEARCH_RATIO)
-  const globeTop = Math.round(screenHeight * GLOBE_RATIO)
-  const globeWidth = Math.min(screenWidth - 20, 394)
+  // Tamanhos seguem a largura da tela; posições verticais seguem a altura
+  const scale = Math.min(screenWidth / FRAME_WIDTH, MAX_SCALE)
+  const yOf = (figmaY) => Math.round((figmaY / FRAME_HEIGHT) * screenHeight)
+
+  const searchTop = yOf(454)
+  const searchHeight = 48 * scale
+  const globeWidth = 394 * scale
 
   return (
     <View style={styles.container}>
-      <FlagMosaic height={mosaicHeight} style={styles.mosaic} />
+      <FlagMosaic height={yOf(415)} style={styles.mosaic} />
 
       {!showResults ? (
-        <GlobeWithClouds width={globeWidth} style={[styles.globe, { top: globeTop, left: (screenWidth - globeWidth) / 2 }]} />
+        <GlobeWithClouds
+          width={globeWidth}
+          style={[styles.globe, { top: yOf(653), left: (screenWidth - globeWidth) / 2 }]}
+          leftCloudStyle={{ top: 46 * scale }}
+          rightCloudStyle={{ top: 149 * scale }}
+        />
       ) : null}
 
       <View style={[styles.content, { paddingTop: searchTop, paddingBottom: insets.bottom }]}>
-        <View style={styles.searchRow}>
-          <SearchBar value={query} onChange={setQuery} style={styles.searchInput} />
+        <View style={[styles.searchRow, { width: 327 * scale, gap: 9 * scale }]}>
+          <SearchBar value={query} onChange={setQuery} style={[styles.searchInput, { height: searchHeight }]} />
           <PixelBox
             onPress={() => setShowFavoritesOnly((current) => !current)}
-            style={styles.favoriteButton}
+            style={{ width: searchHeight, height: searchHeight }}
             contentStyle={showFavoritesOnly ? styles.favoriteActive : null}
             accessibilityLabel={showFavoritesOnly ? 'Mostrar todos os países' : 'Mostrar apenas favoritos'}
             accessibilityState={{ selected: showFavoritesOnly }}
           >
-            <Image source={heart} style={styles.heart} />
+            <Image source={heart} style={{ width: 28 * scale, height: 28 * scale }} />
           </PixelBox>
         </View>
 
-        {loading ? <Loading /> : null}
+        {showResults && loading ? <Loading /> : null}
 
         {showList ? <CountryList countries={filteredCountries} /> : null}
-        {!showResults ? <HeroText style={styles.hero} /> : null}
+        {!showResults ? (
+          <HeroText size={24 * scale} style={{ marginTop: yOf(574) - searchTop - searchHeight }} />
+        ) : null}
       </View>
     </View>
   )
@@ -116,25 +126,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: GUTTER,
   },
   searchRow: {
+    alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
   },
   searchInput: {
     flex: 1,
   },
-  favoriteButton: {
-    width: 48,
-    height: 48,
-  },
   favoriteActive: {
     backgroundColor: colors.backgroundAlt,
-  },
-  heart: {
-    width: 28,
-    height: 28,
-  },
-  hero: {
-    marginTop: 40,
   },
 })
