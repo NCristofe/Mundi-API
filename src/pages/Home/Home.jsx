@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { StyleSheet, View, useWindowDimensions } from 'react-native'
+import { useEffect, useRef, useState } from 'react'
+import { Animated, Easing, StyleSheet, View, useWindowDimensions } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import CountryList from '../../components/CountryList/CountryList.jsx'
 import { FavoriteIcon } from '../../components/FavoriteButton/FavoriteButton.jsx'
@@ -19,6 +19,7 @@ const FRAME_HEIGHT = 874
 const MAX_SCALE = 1.25 // evita elementos gigantes em tablet e web
 const GUTTER = 20
 const SEARCH_DEBOUNCE_MS = 400
+const FLOAT_HALF_CYCLE_MS = 2200
 
 export default function Home({ onSelectCountry, onOpenFavorites }) {
   const insets = useSafeAreaInsets()
@@ -27,6 +28,20 @@ export default function Home({ onSelectCountry, onOpenFavorites }) {
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const float = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    const animate = (toValue) =>
+      Animated.timing(float, {
+        toValue,
+        duration: FLOAT_HALF_CYCLE_MS,
+        easing: Easing.inOut(Easing.sin),
+        useNativeDriver: true,
+      })
+    const animation = Animated.loop(Animated.sequence([animate(1), animate(0)]))
+    animation.start()
+    return () => animation.stop()
+  }, [float])
 
   async function loadCountries(search = query) {
     setLoading(true)
@@ -86,8 +101,17 @@ export default function Home({ onSelectCountry, onOpenFavorites }) {
         <GlobeWithClouds
           width={globeWidth}
           style={[styles.globe, { top: yOf(653), left: (screenWidth - globeWidth) / 2 }]}
-          leftCloudStyle={{ top: 46 * scale }}
-          rightCloudStyle={{ top: 149 * scale }}
+          globeStyle={{
+            transform: [{ translateY: float.interpolate({ inputRange: [0, 1], outputRange: [0, -6 * scale] }) }],
+          }}
+          leftCloudStyle={{
+            top: 46 * scale,
+            transform: [{ translateX: float.interpolate({ inputRange: [0, 1], outputRange: [0, 7 * scale] }) }],
+          }}
+          rightCloudStyle={{
+            top: 149 * scale,
+            transform: [{ translateX: float.interpolate({ inputRange: [0, 1], outputRange: [0, -7 * scale] }) }],
+          }}
         />
       ) : null}
 
