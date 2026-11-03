@@ -7,6 +7,7 @@ import PixelText from '../PixelText/PixelText.jsx'
 // Topo da tela de resultado: nome do país + bandeira grande, que amplia ao tocar
 export default function CountryHeader({ country, style }) {
   const [flagOpen, setFlagOpen] = useState(false)
+  const flagSource = country.flagSource ?? (country.flagUrl ? { uri: country.flagUrl } : null)
 
   return (
     <View style={[styles.header, style]}>
@@ -17,14 +18,20 @@ export default function CountryHeader({ country, style }) {
       </PixelBox>
       <PixelBox
         style={styles.flagBox}
-        onPress={country.flagUrl ? () => setFlagOpen(true) : undefined}
+        onPress={flagSource ? () => setFlagOpen(true) : undefined}
         accessibilityLabel={`Ampliar bandeira de ${country.name}`}
       >
-        {country.flagUrl ? (
-          <Image source={{ uri: country.flagUrl }} style={styles.flag} accessibilityLabel={`Bandeira de ${country.name}`} />
+        {flagSource ? (
+          <Image source={flagSource} style={styles.flag} accessibilityLabel={`Bandeira de ${country.name}`} />
         ) : null}
       </PixelBox>
-      <FlagViewer visible={flagOpen} uri={country.flagUrl} name={country.name} onClose={() => setFlagOpen(false)} />
+      <FlagViewer
+        visible={flagOpen}
+        uri={country.flagUrl}
+        source={country.flagSource}
+        name={country.name}
+        onClose={() => setFlagOpen(false)}
+      />
     </View>
   )
 }

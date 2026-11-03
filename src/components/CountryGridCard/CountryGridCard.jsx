@@ -5,11 +5,13 @@ import PixelText from '../PixelText/PixelText.jsx'
 
 // Card da tela de favoritos (modo blocos): bandeira com coração no canto + nome
 export default function CountryGridCard({ country, favorite = false, onPress, onToggleFavorite, style }) {
+  const flagSource = country.flagSource ?? (country.flagUrl ? { uri: country.flagUrl } : null)
+
   return (
     <View style={[styles.card, style]}>
       <View>
         <PixelBox style={styles.flagBox} onPress={onPress} accessibilityLabel={country.name}>
-          {country.flagUrl ? <Image source={{ uri: country.flagUrl }} style={styles.flag} /> : null}
+          {flagSource ? <Image source={flagSource} style={styles.flag} /> : null}
         </PixelBox>
         <Pressable
           onPress={onToggleFavorite}
@@ -33,15 +35,15 @@ export default function CountryGridCard({ country, favorite = false, onPress, on
 
 const styles = StyleSheet.create({
   card: {
-    width: 154,
     gap: 11,
   },
   flagBox: {
-    height: 117,
+    width: '100%',
+    aspectRatio: 4 / 3,
   },
   flag: {
-    width: 144,
-    height: 107,
+    width: '100%',
+    height: '100%',
     resizeMode: 'cover',
   },
   heart: {
