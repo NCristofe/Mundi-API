@@ -50,6 +50,7 @@ As bandeiras dos países vêm da API (`flagUrl`). A exceção é o carrossel da 
 - **Coração do resultado:** não existe no Figma; foi adicionado no topo da tela para permitir favoritar o país.
 - **ViewToggle:** o Figma não define estado selecionado; o ícone inativo fica cinza (`colors.placeholder`).
 - **CountryGridCard:** o coração fica sobreposto no canto superior direito da bandeira.
+- **Favoritos:** abre no modo blocos, com alternância funcional para lista; a grade mantém duas colunas e dimensiona os cards conforme a largura disponível.
 - **PixelBox pressionado:** desloca 3px na direção da sombra, como feedback de toque (não existe no Figma).
 - **Dados de exemplo do Figma** ("Xique-Xique", "67 TRILHÕES", "Bitcoin (R$)") são placeholders; os valores reais vêm da API.
 

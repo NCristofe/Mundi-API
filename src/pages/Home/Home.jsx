@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Animated, Easing, StyleSheet, View, useWindowDimensions } from 'react-native'
+import { Animated, Easing, Platform, StyleSheet, View, useWindowDimensions } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import CountryList from '../../components/CountryList/CountryList.jsx'
 import { FavoriteIcon } from '../../components/FavoriteButton/FavoriteButton.jsx'
@@ -36,7 +36,7 @@ export default function Home({ onSelectCountry, onOpenFavorites }) {
         toValue,
         duration: FLOAT_HALF_CYCLE_MS,
         easing: Easing.inOut(Easing.sin),
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       })
     const animation = Animated.loop(Animated.sequence([animate(1), animate(0)]))
     animation.start()
