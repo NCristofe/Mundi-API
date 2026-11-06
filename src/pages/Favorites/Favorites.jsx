@@ -22,6 +22,7 @@ export default function Favorites({ onBack, onSelectCountry }) {
   const { favorites, toggleFavorite } = useFavorites()
   const [query, setQuery] = useState('')
   const [countryToRemove, setCountryToRemove] = useState(null)
+  const [removalDialogVisible, setRemovalDialogVisible] = useState(false)
   const [viewMode, setViewMode] = useState('grid')
   const [listWidth, setListWidth] = useState(0)
   // Lista fixada ao abrir a tela: quem é desfavoritado continua visível, com o coração vazio
@@ -42,13 +43,17 @@ export default function Favorites({ onBack, onSelectCountry }) {
   }, [onBack])
 
   function handleToggleFavorite(country) {
-    if (favoriteCodes.has(country.code)) setCountryToRemove(country)
-    else toggleFavorite(country)
+    if (favoriteCodes.has(country.code)) {
+      setCountryToRemove(country)
+      setRemovalDialogVisible(true)
+    } else {
+      toggleFavorite(country)
+    }
   }
 
   function confirmRemoval() {
     toggleFavorite(countryToRemove)
-    setCountryToRemove(null)
+    setRemovalDialogVisible(false)
   }
 
   function renderCountry({ item }) {
@@ -108,11 +113,11 @@ export default function Favorites({ onBack, onSelectCountry }) {
       />
 
       <ConfirmDialog
-        visible={countryToRemove !== null}
+        visible={removalDialogVisible}
         message={`Tem certeza que quer tirar ${countryToRemove?.name} dos favoritos?`}
         confirmLabel="Tirar"
         onConfirm={confirmRemoval}
-        onCancel={() => setCountryToRemove(null)}
+        onCancel={() => setRemovalDialogVisible(false)}
       />
     </View>
   )
