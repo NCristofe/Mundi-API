@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
   },
   heart: {
     position: 'absolute',
-    top: -6,
-    right: -6,
+    top: 10,
+    right: 10,
   },
   nameBox: {
     height: 44,
