@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Animated, Easing, Image, Platform, StyleSheet, View, useWindowDimensions } from 'react-native'
-import { colors } from '../theme.js'
+import { useTheme, useThemedStyles } from '../../context/ThemeContext.jsx'
 
 const fadeMask = require('../../assets/images/fade.png')
 
@@ -81,7 +81,9 @@ function FlagRow({ index, scale }) {
 }
 
 // Carrossel inclinado de bandeiras do topo da tela inicial; o fade leva as bandeiras até o fundo
-export default function FlagMosaic({ height = 360, fadeColor = colors.background, style }) {
+export default function FlagMosaic({ height = 360, fadeColor, style }) {
+  const styles = useThemedStyles(createStyles)
+  const { colors } = useTheme()
   const { width: screenWidth } = useWindowDimensions()
   const scale = screenWidth / FRAME_WIDTH
 
@@ -103,29 +105,30 @@ export default function FlagMosaic({ height = 360, fadeColor = colors.background
           <FlagRow key={index} index={index} scale={scale} />
         ))}
       </View>
-      <Image source={fadeMask} resizeMode="stretch" tintColor={fadeColor} style={styles.fade} />
+      <Image source={fadeMask} resizeMode="stretch" tintColor={fadeColor ?? colors.background} style={styles.fade} />
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    overflow: 'hidden',
-    backgroundColor: colors.background,
-  },
-  grid: {
-    position: 'absolute',
-    transform: [{ rotate: '-10deg' }],
-  },
-  row: {
-    flexDirection: 'row',
-  },
-  fade: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: '100%',
-    height: '45%',
-  },
-})
+const createStyles = (colors) =>
+  StyleSheet.create({
+    container: {
+      overflow: 'hidden',
+      backgroundColor: colors.background,
+    },
+    grid: {
+      position: 'absolute',
+      transform: [{ rotate: '-10deg' }],
+    },
+    row: {
+      flexDirection: 'row',
+    },
+    fade: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: '100%',
+      height: '45%',
+    },
+  })
