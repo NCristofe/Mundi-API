@@ -18,10 +18,12 @@ import PixelBox from '../../components/PixelBox/PixelBox.jsx'
 import PixelText from '../../components/PixelText/PixelText.jsx'
 import SearchBar from '../../components/SearchBar/SearchBar.jsx'
 import ViewToggle from '../../components/ViewToggle/ViewToggle.jsx'
-import { colors } from '../../components/theme.js'
+import ThemeToggle from '../../components/ThemeToggle/ThemeToggle.jsx'
+import { ThemeProvider, useTheme, useThemedStyles } from '../../context/ThemeContext.jsx'
 import { searchCountries } from '../../services/countriesApi.js'
 
 function Section({ title, children }) {
+  const styles = useThemedStyles(createStyles)
   return (
     <View style={styles.section}>
       <PixelText size={10} style={styles.sectionTitle}>
@@ -33,6 +35,16 @@ function Section({ title, children }) {
 }
 
 export default function ComponentsDemo() {
+  return (
+    <ThemeProvider>
+      <ComponentsDemoContent />
+    </ThemeProvider>
+  )
+}
+
+function ComponentsDemoContent() {
+  const styles = useThemedStyles(createStyles)
+  const { mode, colors } = useTheme()
   const [fontsLoaded] = useFonts({ PressStart2P_400Regular })
   const [query, setQuery] = useState('')
   const [countries, setCountries] = useState([])
@@ -78,7 +90,7 @@ export default function ComponentsDemo() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeArea}>
-        <StatusBar style="dark" />
+        <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           <PixelText size={14} style={styles.pageTitle}>
             Componentes Mundi
@@ -91,6 +103,10 @@ export default function ComponentsDemo() {
             <PixelBox style={styles.demoBox} onPress={() => {}}>
               <PixelText>Pressionável</PixelText>
             </PixelBox>
+          </Section>
+
+          <Section title="ThemeToggle">
+            <ThemeToggle />
           </Section>
 
           <Section title="BackButton / ViewToggle">
@@ -175,55 +191,56 @@ export default function ComponentsDemo() {
   )
 }
 
-const styles = StyleSheet.create({
-  fontLoading: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    paddingHorizontal: 38,
-    paddingVertical: 24,
-    gap: 40,
-  },
-  pageTitle: {
-    marginBottom: -8,
-  },
-  section: {
-    gap: 20,
-  },
-  sectionTitle: {
-    textAlign: 'left',
-    color: colors.placeholder,
-  },
-  demoBox: {
-    height: 56,
-  },
-  toolbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  searchRow: {
-    flexDirection: 'row',
-    gap: 9,
-  },
-  searchInput: {
-    flex: 1,
-  },
-  error: {
-    color: colors.error,
-  },
-  center: {
-    alignSelf: 'center',
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    rowGap: 24,
-  },
-})
+const createStyles = (colors) =>
+  StyleSheet.create({
+    fontLoading: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    content: {
+      paddingHorizontal: 38,
+      paddingVertical: 24,
+      gap: 40,
+    },
+    pageTitle: {
+      marginBottom: -8,
+    },
+    section: {
+      gap: 20,
+    },
+    sectionTitle: {
+      textAlign: 'left',
+      color: colors.placeholder,
+    },
+    demoBox: {
+      height: 56,
+    },
+    toolbar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    searchRow: {
+      flexDirection: 'row',
+      gap: 9,
+    },
+    searchInput: {
+      flex: 1,
+    },
+    error: {
+      color: colors.error,
+    },
+    center: {
+      alignSelf: 'center',
+    },
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      rowGap: 24,
+    },
+  })
