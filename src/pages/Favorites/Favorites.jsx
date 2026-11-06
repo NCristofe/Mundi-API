@@ -3,6 +3,7 @@ import { BackHandler, FlatList, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import BackButton from '../../components/BackButton/BackButton.jsx'
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog.jsx'
+import CountryGridCard from '../../components/CountryGridCard/CountryGridCard.jsx'
 import CountryListItem from '../../components/CountryListItem/CountryListItem.jsx'
 import PixelText from '../../components/PixelText/PixelText.jsx'
 import SearchBar from '../../components/SearchBar/SearchBar.jsx'
@@ -14,18 +15,24 @@ function normalizeText(text) {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR')
 }
 
+const GRID_GAP = 16
+
 export default function Favorites({ onBack, onSelectCountry }) {
   const insets = useSafeAreaInsets()
   const { favorites, toggleFavorite } = useFavorites()
   const [query, setQuery] = useState('')
   const [countryToRemove, setCountryToRemove] = useState(null)
+  const [removalDialogVisible, setRemovalDialogVisible] = useState(false)
+  const [viewMode, setViewMode] = useState('grid')
+  const [listWidth, setListWidth] = useState(0)
   // Lista fixada ao abrir a tela: quem é desfavoritado continua visível, com o coração vazio
   const [listedCountries] = useState(favorites)
-  const favoriteCodes = new Set(favorites.map((favorite) => favorite.code))
+  const favoriteCodes = useMemo(() => new Set(favorites.map((favorite) => favorite.code)), [favorites])
   const filteredFavorites = useMemo(() => {
     const normalizedQuery = normalizeText(query.trim())
     return listedCountries.filter((country) => normalizeText(country.name).includes(normalizedQuery))
   }, [listedCountries, query])
+  const cardWidth = Math.max(0, (listWidth - GRID_GAP) / 2)
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -36,23 +43,31 @@ export default function Favorites({ onBack, onSelectCountry }) {
   }, [onBack])
 
   function handleToggleFavorite(country) {
-    if (favoriteCodes.has(country.code)) setCountryToRemove(country)
-    else toggleFavorite(country)
+    if (favoriteCodes.has(country.code)) {
+      setCountryToRemove(country)
+      setRemovalDialogVisible(true)
+    } else {
+      toggleFavorite(country)
+    }
   }
 
   function confirmRemoval() {
     toggleFavorite(countryToRemove)
-    setCountryToRemove(null)
+    setRemovalDialogVisible(false)
   }
 
   function renderCountry({ item }) {
-    return (
-      <CountryListItem
-        country={item}
-        favorite={favoriteCodes.has(item.code)}
-        onPress={() => onSelectCountry(item)}
-        onToggleFavorite={() => handleToggleFavorite(item)}
-      />
+    const itemProps = {
+      country: item,
+      favorite: favoriteCodes.has(item.code),
+      onPress: () => onSelectCountry(item),
+      onToggleFavorite: () => handleToggleFavorite(item),
+    }
+
+    return viewMode === 'grid' ? (
+      <CountryGridCard {...itemProps} style={{ width: cardWidth || '48%' }} />
+    ) : (
+      <CountryListItem {...itemProps} />
     )
   }
 
@@ -60,7 +75,7 @@ export default function Favorites({ onBack, onSelectCountry }) {
     <View style={[styles.container, { paddingTop: insets.top + 16, paddingBottom: insets.bottom }]}>
       <View style={styles.header}>
         <BackButton onPress={onBack} />
-        <ViewToggle value="list" showGrid={false} />
+        <ViewToggle value={viewMode} onChange={setViewMode} />
       </View>
 
       <SearchBar
@@ -71,18 +86,26 @@ export default function Favorites({ onBack, onSelectCountry }) {
       />
 
       <FlatList
+        key={viewMode}
         data={filteredFavorites}
         extraData={favorites}
+        numColumns={viewMode === 'grid' ? 2 : 1}
         keyExtractor={(country) => country.code}
         renderItem={renderCountry}
+        onLayout={({ nativeEvent }) => setListWidth(nativeEvent.layout.width)}
         contentContainerStyle={[
-          styles.list,
+          viewMode === 'grid' ? styles.grid : styles.list,
           filteredFavorites.length === 0 && styles.emptyList,
         ]}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        columnWrapperStyle={viewMode === 'grid' ? styles.gridRow : undefined}
+        ItemSeparatorComponent={() => (
+          <View style={viewMode === 'grid' ? styles.gridSeparator : styles.separator} />
+        )}
         ListEmptyComponent={
           <PixelText size={10} style={styles.emptyText}>
-            Nenhum favorito encontrado.
+            {listedCountries.length === 0 && !query.trim()
+              ? 'Você ainda não tem países favoritos.'
+              : 'Nenhum favorito encontrado.'}
           </PixelText>
         }
         keyboardShouldPersistTaps="handled"
@@ -90,11 +113,11 @@ export default function Favorites({ onBack, onSelectCountry }) {
       />
 
       <ConfirmDialog
-        visible={countryToRemove !== null}
+        visible={removalDialogVisible}
         message={`Tem certeza que quer tirar ${countryToRemove?.name} dos favoritos?`}
         confirmLabel="Tirar"
         onConfirm={confirmRemoval}
-        onCancel={() => setCountryToRemove(null)}
+        onCancel={() => setRemovalDialogVisible(false)}
       />
     </View>
   )
@@ -117,6 +140,16 @@ const styles = StyleSheet.create({
   list: {
     paddingTop: 24,
     paddingBottom: 24,
+  },
+  grid: {
+    paddingTop: 24,
+    paddingBottom: 24,
+  },
+  gridRow: {
+    gap: GRID_GAP,
+  },
+  gridSeparator: {
+    height: 22,
   },
   emptyList: {
     flexGrow: 1,

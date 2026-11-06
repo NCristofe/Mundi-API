@@ -5,10 +5,12 @@ import PixelText from '../PixelText/PixelText.jsx'
 
 // Linha da tela de favoritos (modo lista): bandeira + nome + coração
 export default function CountryListItem({ country, favorite = false, onPress, onToggleFavorite, style }) {
+  const flagSource = country.flagSource ?? (country.flagUrl ? { uri: country.flagUrl } : null)
+
   return (
     <View style={[styles.row, style]}>
       <PixelBox style={styles.flagBox} contentStyle={styles.flagContent} onPress={onPress} accessibilityLabel={country.name}>
-        {country.flagUrl ? <Image source={{ uri: country.flagUrl }} style={styles.flag} /> : null}
+        {flagSource ? <Image source={flagSource} style={styles.flag} /> : null}
       </PixelBox>
       <PixelBox style={styles.nameBox} contentStyle={styles.nameContent} onPress={onPress} accessibilityLabel={country.name}>
         <PixelText size={8} numberOfLines={3}>

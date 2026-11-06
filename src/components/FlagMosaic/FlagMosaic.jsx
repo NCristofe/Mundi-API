@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Animated, Easing, Image, StyleSheet, View, useWindowDimensions } from 'react-native'
+import { Animated, Easing, Image, Platform, StyleSheet, View, useWindowDimensions } from 'react-native'
 import { colors } from '../theme.js'
 
 const fadeMask = require('../../assets/images/fade.png')
@@ -55,7 +55,7 @@ function FlagRow({ index, scale }) {
         toValue: 1,
         duration: (FLAGS_PER_ROW * (TILE_WIDTH + TILE_GAP) * 1000) / SPEED,
         easing: Easing.linear,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
     )
     animation.start()
