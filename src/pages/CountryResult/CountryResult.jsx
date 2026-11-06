@@ -9,16 +9,17 @@ import Loading from '../../components/Loading/Loading.jsx'
 import MapButton from '../../components/MapButton/MapButton.jsx'
 import PixelText from '../../components/PixelText/PixelText.jsx'
 import SearchBar from '../../components/SearchBar/SearchBar.jsx'
-import { colors } from '../../components/theme.js'
 import { useFavorites } from '../../context/FavoritesContext.jsx'
 import { findCountry } from '../../services/countriesApi.js'
 import CountryMap from '../CountryMap/CountryMap.jsx'
+import { useThemedStyles } from '../../context/ThemeContext.jsx'
 
 // Medidas da tela de resultado do Figma, em um frame de 402 de largura
 const FRAME_WIDTH = 402
 const MAX_SCALE = 1.25 // evita elementos gigantes em tablet e web
 
 export default function CountryResult({ country, onBack, onSelectCountry }) {
+  const styles = useThemedStyles(createStyles)
   const insets = useSafeAreaInsets()
   const { width: screenWidth } = useWindowDimensions()
   const scrollRef = useRef(null)
@@ -118,19 +119,20 @@ export default function CountryResult({ country, onBack, onSelectCountry }) {
   )
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  favorite: {
-    position: 'absolute',
-  },
-  content: {
-    alignSelf: 'center',
-  },
-  error: {
-    marginTop: 14,
-    color: colors.error,
-  },
-})
+const createStyles = (colors) =>
+  StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    favorite: {
+      position: 'absolute',
+    },
+    content: {
+      alignSelf: 'center',
+    },
+    error: {
+      marginTop: 14,
+      color: colors.error,
+    },
+  })
