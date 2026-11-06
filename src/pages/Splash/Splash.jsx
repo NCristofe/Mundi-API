@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Animated, Easing, StyleSheet, useWindowDimensions, View } from 'react-native'
 import GlobeWithClouds from '../../components/GlobeWithClouds/GlobeWithClouds.jsx'
-import { colors } from '../../components/theme.js'
+import { useThemedStyles } from '../../context/ThemeContext.jsx'
 
 const GUTTER = 16
 const MAX_GLOBE_WIDTH = 394 // tamanho de referência do Figma; evita o globo gigante em tablet e web
@@ -13,6 +13,7 @@ const EXIT_MS = 500
 // Splashscreen animada: globo, nuvem esquerda e nuvem direita têm valores animados próprios.
 // Linha do tempo: giro do globo (1,1s) → nuvens (~0,95s) → flutuação (~1,6s) → pausa → saída (0,5s) ≈ 4,55s.
 export default function Splash({ onFinish }) {
+  const styles = useThemedStyles(createStyles)
   const { width: screenWidth } = useWindowDimensions()
   const globeWidth = Math.min(screenWidth - GUTTER * 2, MAX_GLOBE_WIDTH)
 
@@ -154,12 +155,13 @@ export default function Splash({ onFinish }) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-    overflow: 'hidden',
-  },
-})
+const createStyles = (colors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+      overflow: 'hidden',
+    },
+  })

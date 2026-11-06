@@ -4,7 +4,7 @@ import { WebView } from 'react-native-webview'
 import BackButton from '../../components/BackButton/BackButton.jsx'
 import PixelBox from '../../components/PixelBox/PixelBox.jsx'
 import PixelText from '../../components/PixelText/PixelText.jsx'
-import { colors } from '../../components/theme.js'
+import { useThemedStyles } from '../../context/ThemeContext.jsx'
 
 // Medidas da tela de mapa do Figma, em um frame de 402 de largura
 const FRAME_WIDTH = 402
@@ -61,6 +61,7 @@ function buildMapHtml({ name, coordinates, areaKm }) {
 }
 
 export default function CountryMap({ country, onBack }) {
+  const styles = useThemedStyles(createStyles)
   const insets = useSafeAreaInsets()
   const { width: screenWidth } = useWindowDimensions()
   const scale = Math.min(screenWidth / FRAME_WIDTH, MAX_SCALE)
@@ -89,18 +90,19 @@ export default function CountryMap({ country, onBack }) {
   )
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  map: {
-    flex: 1,
-  },
-  back: {
-    position: 'absolute',
-  },
-  title: {
-    position: 'absolute',
-  },
-})
+const createStyles = (colors) =>
+  StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    map: {
+      flex: 1,
+    },
+    back: {
+      position: 'absolute',
+    },
+    title: {
+      position: 'absolute',
+    },
+  })

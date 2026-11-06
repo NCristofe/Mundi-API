@@ -10,8 +10,9 @@ import Loading from '../../components/Loading/Loading.jsx'
 import PixelBox from '../../components/PixelBox/PixelBox.jsx'
 import PixelText from '../../components/PixelText/PixelText.jsx'
 import SearchBar from '../../components/SearchBar/SearchBar.jsx'
-import { colors } from '../../components/theme.js'
+import ThemeToggle from '../../components/ThemeToggle/ThemeToggle.jsx'
 import { findCountry, searchCountries } from '../../services/countriesApi.js'
+import { useThemedStyles } from '../../context/ThemeContext.jsx'
 
 // Medidas da tela inicial do Figma, em um frame de 402×874
 const FRAME_WIDTH = 402
@@ -22,6 +23,7 @@ const SEARCH_DEBOUNCE_MS = 400
 const FLOAT_HALF_CYCLE_MS = 2200
 
 export default function Home({ onSelectCountry, onOpenFavorites }) {
+  const styles = useThemedStyles(createStyles)
   const insets = useSafeAreaInsets()
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
   const [countries, setCountries] = useState([])
@@ -149,42 +151,51 @@ export default function Home({ onSelectCountry, onOpenFavorites }) {
           <HeroText size={24 * scale} style={{ marginTop: yOf(574) - searchTop - searchHeight }} />
         ) : null}
       </View>
+
+      <ThemeToggle
+        size={40 * scale}
+        style={[styles.themeToggle, { top: insets.top + 14 * scale, right: GUTTER }]}
+      />
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  mosaic: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-  },
-  globe: {
-    position: 'absolute',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: GUTTER,
-  },
-  searchRow: {
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  searchInput: {
-    flex: 1,
-  },
-  results: {
-    flex: 1,
-    alignSelf: 'center',
-  },
-  error: {
-    marginTop: 20,
-    color: colors.error,
-  },
-})
+const createStyles = (colors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    mosaic: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+    },
+    globe: {
+      position: 'absolute',
+    },
+    themeToggle: {
+      position: 'absolute',
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: GUTTER,
+    },
+    searchRow: {
+      alignSelf: 'center',
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    searchInput: {
+      flex: 1,
+    },
+    results: {
+      flex: 1,
+      alignSelf: 'center',
+    },
+    error: {
+      marginTop: 20,
+      color: colors.error,
+    },
+  })

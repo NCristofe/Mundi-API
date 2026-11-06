@@ -4,7 +4,7 @@
     "slug": "mundi",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "backgroundColor": "#f5f7f6"
     },

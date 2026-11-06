@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
 import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { colors } from './components/theme.js'
 import { FavoritesProvider } from './context/FavoritesContext.jsx'
 import CountryResult from './pages/CountryResult/CountryResult.jsx'
 import Favorites from './pages/Favorites/Favorites.jsx'
@@ -14,6 +13,7 @@ import { findCountry } from './services/countriesApi.js'
 import flagBrazil from './assets/images/flags/br.png'
 import flagCanada from './assets/images/flags/ca.png'
 import flagJapan from './assets/images/flags/jp.png'
+import { ThemeProvider, useTheme, useThemedStyles } from './context/ThemeContext.jsx'
 
 const PREVIEW_COUNTRIES = [
   {
@@ -67,6 +67,17 @@ const PREVIEW_COUNTRIES = [
 ]
 
 export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  )
+}
+
+function AppContent() {
+  const styles = useThemedStyles(createStyles)
+  const { mode, colors } = useTheme()
+  const statusBarStyle = mode === 'dark' ? 'light' : 'dark'
   const [fontsLoaded] = useFonts({ PressStart2P_400Regular })
   const isWebPreview = Platform.OS === 'web'
   const [previewFavorites, setPreviewFavorites] = useState(null)
@@ -104,13 +115,13 @@ export default function App() {
     <SafeAreaProvider>
       {isWebPreview && !previewFavorites ? (
         <View style={[styles.root, styles.previewState]}>
-          <StatusBar style="dark" />
+          <StatusBar style={statusBarStyle} />
           <ActivityIndicator color={colors.text} />
         </View>
       ) : (
         <FavoritesProvider initialFavorites={isWebPreview ? previewFavorites : []}>
           <View style={styles.root}>
-            <StatusBar style="dark" />
+            <StatusBar style={statusBarStyle} />
             {!splashDone ? <Splash onFinish={() => setSplashDone(true)} /> : null}
             {splashDone && fontsLoaded ? (
               selectedCountry ? (
@@ -132,14 +143,15 @@ export default function App() {
   )
 }
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  previewState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-  },
-})
+const createStyles = (colors) =>
+  StyleSheet.create({
+    root: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    previewState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+    },
+  })

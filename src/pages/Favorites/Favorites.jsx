@@ -8,8 +8,8 @@ import CountryListItem from '../../components/CountryListItem/CountryListItem.js
 import PixelText from '../../components/PixelText/PixelText.jsx'
 import SearchBar from '../../components/SearchBar/SearchBar.jsx'
 import ViewToggle from '../../components/ViewToggle/ViewToggle.jsx'
-import { colors } from '../../components/theme.js'
 import { useFavorites } from '../../context/FavoritesContext.jsx'
+import { useThemedStyles } from '../../context/ThemeContext.jsx'
 
 function normalizeText(text) {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR')
@@ -18,6 +18,7 @@ function normalizeText(text) {
 const GRID_GAP = 16
 
 export default function Favorites({ onBack, onSelectCountry }) {
+  const styles = useThemedStyles(createStyles)
   const insets = useSafeAreaInsets()
   const { favorites, toggleFavorite } = useFavorites()
   const [query, setQuery] = useState('')
@@ -123,42 +124,43 @@ export default function Favorites({ onBack, onSelectCountry }) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingHorizontal: 20,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  search: {
-    marginTop: 26,
-  },
-  list: {
-    paddingTop: 24,
-    paddingBottom: 24,
-  },
-  grid: {
-    paddingTop: 24,
-    paddingBottom: 24,
-  },
-  gridRow: {
-    gap: GRID_GAP,
-  },
-  gridSeparator: {
-    height: 22,
-  },
-  emptyList: {
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
-  emptyText: {
-    paddingHorizontal: 8,
-  },
-  separator: {
-    height: 14,
-  },
-})
+const createStyles = (colors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: 20,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    search: {
+      marginTop: 26,
+    },
+    list: {
+      paddingTop: 24,
+      paddingBottom: 24,
+    },
+    grid: {
+      paddingTop: 24,
+      paddingBottom: 24,
+    },
+    gridRow: {
+      gap: GRID_GAP,
+    },
+    gridSeparator: {
+      height: 22,
+    },
+    emptyList: {
+      flexGrow: 1,
+      justifyContent: 'center',
+    },
+    emptyText: {
+      paddingHorizontal: 8,
+    },
+    separator: {
+      height: 14,
+    },
+  })
